@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PW}
-      POSTGRES_DB: workshops-on-demand
+      POSTGRES_DB: discover-workshops-registration
       PGDATA: /var/lib/postgresql/data/apertis-qa-report
 
   adminer:

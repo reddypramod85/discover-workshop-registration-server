@@ -12,9 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       email: DataTypes.STRING,
       company: DataTypes.STRING,
-      //workshopList: DataTypes.ARRAY(DataTypes.STRING),
-      workshop: DataTypes.STRING,
-      hours: DataTypes.INTEGER,
+      workshopList: DataTypes.ARRAY(DataTypes.STRING),
+      // workshop: DataTypes.STRING,
       startDate: DataTypes.DATE,
       endDate: DataTypes.DATE,
       active: {

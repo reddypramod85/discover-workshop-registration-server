@@ -124,9 +124,8 @@ var migrationCommands = [
         name: Sequelize.STRING,
         email: Sequelize.STRING,
         company: Sequelize.STRING,
-        //workshopList: Sequelize.ARRAY(Sequelize.STRING),
-        workshop: Sequelize.STRING,
-        hours: Sequelize.INTEGER,
+        workshopList: Sequelize.ARRAY(Sequelize.STRING),
+        // workshop: Sequelize.STRING,
         startDate: {
           type: Sequelize.DATE,
           allowNull: false

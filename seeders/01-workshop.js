@@ -7,7 +7,7 @@ module.exports = {
         name: "RedFish API101",
         description:
           "After a quick positioning of the DMTF Redfish API, we will explore a Redfish tree to understand its basic structure",
-        capacity: 20,
+        capacity: 0,
         preRequisite: "Python, API",
         replayAvailable: true,
         active: false,
