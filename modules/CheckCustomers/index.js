@@ -71,15 +71,16 @@ const checkCustomer = () => {
           console.log("send welcome email");
           return sendEmail({
             recipient: dataValues.email,
-            subject: "Welcome to HPE Workshops On Demand",
+            subject: "Welcome to HPE Workshops",
             content: createEmailBody({
-              heading: "Welcome to HPE Workshops On Demand!",
+              heading: "Welcome to HPE Workshops!",
               content: `
                 Hi ${dataValues.name},</br>
-                Your request for the <b>${dataValues.workshop}</b> workshop has been received. We will send you the access details shortly in a seperate email.</br>
-                <b>NOTE:</b> Your wokshop access will be expired in ${dataValues.hours} hours after you receive your credentials.</br>
+                Your request for the <b>${dataValues.workshopList}</b> workshop(s) has been received. We will send you the access details 1 hour before the session starts in a seperate email.</br>
                 </br></br>
-              `
+              `,
+              buttonLabel: "Modify Registration",
+              buttonUrl: "http://localhost:3000/modify"
             })
           }).then(() => {
             customer.update({
@@ -90,22 +91,30 @@ const checkCustomer = () => {
 
         // Send workshop credentilas as soon as there are ready.
         if (customerStatus && dataValues.lastEmailSent === "welcome") {
-          // fetch the customer requested workshop from workshops table
-          const workshop = await models.workshop.findOne({
-            where: { name: dataValues.workshop }
+          // fetch the customer requested workshops from workshops table
+
+          const workshops = await models.workshop.findAll({
+            attributes: ["name", "replayAvailable", "videoUrl"],
+            where: { name: dataValues.workshopList }
           });
+          let arr = [];
+          workshops.forEach(workshop => {
+            arr.push({ ...workshop.dataValues });
+          });
+          console.log("workshops arr", arr);
           console.log("send workshops credentials email");
           return sendEmail({
             recipient: dataValues.email,
-            subject: "Your HPE Workshops On Demand credentials",
+            subject: "Your HPE Workshops credentials",
             content: createEmailBody({
-              heading: "Your HPE Workshops On Demand credentials",
-              content: `Your <b>${dataValues.workshop}</b> workshop credentials along with the video link are provided below to follow along the workshop. Your access to the workshop will end in ${dataValues.hours} hours from now.`,
+              heading: "Your HPE Workshops credentials",
+              content: `You can start your <b>${dataValues.workshopList}</b> workshop(s) using credentials provided below. Your access to the workshop will end in ${process.env.WORKSHOP_DURATION} hours from now.`,
               buttonLabel: "Start Workshop",
               buttonUrl: dataValues.student.url,
               userName: dataValues.student.username,
               password: dataValues.student.password,
-              videoUrl: `${workshop.replayAvailable}` ? workshop.videoUrl : ""
+              // videoUrl: `${workshop.replayAvailable}` ? workshop.videoUrl : ""
+              videoUrl: arr
             })
           }).then(() => {
             customer.update({

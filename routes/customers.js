@@ -42,28 +42,45 @@ router.get("/customer/:id", (req, res) => {
     });
 });
 
+// Get customer by emailID
+router.get("/customer/email/:emailID", (req, res) => {
+  models.customer
+    .findAll({
+      where: { email: req.params.emailID }
+    })
+    .then(entry => {
+      if (entry) res.status(200).send(entry);
+      else res.status(400).send("Customer Not Found");
+    })
+    .catch(error => {
+      res.status(400).send({ error });
+    });
+});
+
 // Create customer
 router.post("/customer/create", async (req, res) => {
   try {
     // check whether customer is already registered for another workshop
-    const count = await models.customer.count({
+    const { count, rows } = await models.customer.findAndCountAll({
       where: {
         email: req.body.email
       }
     });
     console.log("count", count);
-    if (count >= 2) {
+    if (count >= 1) {
       res
         .status(202)
-        .send(
-          "You can only register for two workshops at a time, please finish and try again!"
-        );
+        .send({
+          message:
+            "You have already registered, please click on update to make changes!",
+          response: rows
+        });
       return;
     }
     // fetch the customer requested workshop from workshops table
-    const workshop = await models.workshop.findOne({
-      where: { name: req.body.workshop }
-    });
+    // const workshops = await models.workshop.findAll({
+    //   where: { name: req.body.workshopList }
+    // });
 
     // fetch the unassigned student account to assign to the requested customer
     const student = await models.student.findOne({
@@ -82,7 +99,6 @@ router.post("/customer/create", async (req, res) => {
       console.log("customer req", req.body);
       const dataValues = await models.customer.create({
         ...req.body,
-        hours: 4,
         ...getDates(),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -95,7 +111,9 @@ router.post("/customer/create", async (req, res) => {
           studentId: student.id
           // workshopId: workshop.id
         });
-        await workshop.decrement("capacity");
+        await models.workshop.decrement("capacity", {
+          where: { name: dataValues.workshopList }
+        });
         //await dataValues.save();
         res.status(200).send({});
       }

@@ -5,7 +5,8 @@ module.exports = ({
   buttonUrl,
   userName,
   password,
-  videoUrl
+  videoUrl,
+  cancelButton
 }) => `
 <html>
 
@@ -56,14 +57,12 @@ module.exports = ({
       : ""
   }
 
-
-  ${
-    videoUrl
-      ? `<a href="${videoUrl}" style="display: inline-block; margin: 48px 0; padding: 18px 48px; background-color: #01A982; color: #FFFFFF; font-size: 20px; font-weight: 700; text-decoration: none;">
-        Play Workshop Video
-      </a>`
-      : ""
-  }
+  ${videoUrl &&
+    videoUrl.map(workshop => {
+      `<a href="${workshop.videoUrl}" style="display: inline-block; margin: 48px 0; padding: 18px 48px; background-color: #01A982; color: #FFFFFF; font-size: 20px; font-weight: 700; text-decoration: none;">
+        Play ${workshop.name} Video
+      </a>`;
+    })}
   
   
   </div>

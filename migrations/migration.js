@@ -122,7 +122,11 @@ var migrationCommands = [
           autoIncrement: true
         },
         name: Sequelize.STRING,
-        email: Sequelize.STRING,
+        email: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          unique: true
+        },
         company: Sequelize.STRING,
         workshopList: Sequelize.ARRAY(Sequelize.STRING),
         // workshop: Sequelize.STRING,
